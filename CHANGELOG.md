@@ -8,7 +8,8 @@
 - Use short private helper sockets for long paths and surface platform compatibility in the dashboard.
 - Unwrap desktop continuation responses and fail promptly when the live bridge disconnects.
 - Add macOS platform/regression tests and a Windows/macOS CI matrix.
-- Real Goal recovery remains unverified; see docs/MACOS.md for the acceptance record.
+- Dedicated Mac chat acceptance verified exact-turn interruption, one continuation completing with the expected marker, idempotent replay, and helper shutdown.
+- Real quota-reset and Goal recovery remain unverified; see docs/MACOS.md for the acceptance record.
 
 ## Unreleased
 

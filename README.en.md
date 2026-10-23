@@ -4,7 +4,7 @@
 
 A local quota monitor for explicitly selected Windows and macOS Codex desktop chats. A browser dashboard lets you configure thresholds, select chats, and manually stop or continue a turn. A shared Node.js helper polls quota without continuous model inference.
 
-This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. macOS support is experimental and limited to the reviewed Apple Silicon version. Ordinary ChatGPT web chats, cloud tasks and Linux desktop control are outside the supported scope. New Mac installations default to observe mode with no selected chats. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
+This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. macOS support is experimental and limited to the reviewed Apple Silicon version. Ordinary ChatGPT web chats, cloud tasks and Linux desktop control are outside the supported scope. Ordinary-chat interruption, continuation completion and idempotent replay were verified on the documented Mac version. New Mac installations default to observe mode with no selected chats. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
 
 ## Install
 

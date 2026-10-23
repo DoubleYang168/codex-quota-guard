@@ -27,7 +27,8 @@ Apple Silicon arm64；桌面 `26.1016.62342`（build 21477）；CLI `0.163.0-alp
 - 独立 CODEX_HOME 插件注册和全部 10 个 MCP 工具发现通过；实际源码安装脚本首次安装、重复安装幂等、含空格数据目录及原状态保留通过。
 - 源码清单、版本和文档链接检查通过；运行 ZIP 与源码 ZIP 的 CRC／SHA-256／文件一致性检查通过。
 - 原始只读报告保存在 `.runtime/macos-validation.json`；真实聊天标识、账户和本机路径不进入公开报告。
-- 没有真实停止／续跑或 Goal 恢复验收，没有修改当前用户插件注册；Windows 回归由测试代码与新增 CI 覆盖，未在本机运行 Windows。
+- 用户授权新建专用普通聊天：手动停止准确中断原轮次，单次续跑产生不同的新轮次，并以 completed 状态返回 `QUOTA_GUARD_TEST_RESUME_OK`；重复请求编号返回同一确认轮次，未重复启动。自动监控关闭、未创建 Goal，测试后台已退出。原始证据为 `.runtime/macos-real-control-validation.json`。
+- 尚未完成真实额度重置恢复或 Goal 恢复验收；没有修改当前用户插件注册。Windows 回归由测试代码与新增 CI 覆盖，未在本机运行 Windows。
 
 Mac 使用桌面 IPC 的临时状态订阅，不通过 app-tools 进程来源校验通道获取实时状态。安装步骤与能力边界见 [Mac 专用说明](MACOS.md)。
 

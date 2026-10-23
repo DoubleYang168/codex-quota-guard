@@ -9,8 +9,8 @@ export const reviewedPlatforms = Object.freeze({
     ['codex-cli 0.163.0-alpha.10.2', '26.1013.4894.0'],
     ['codex-cli 0.163.0-alpha.11.2', '26.1016.8622.0']
   ],
-  // Protocol reviewed and read-only connection verified on arm64. Control and
-  // Goal recovery remain experimental, see docs/MACOS.md for acceptance status.
+  // Protocol, read-only access and ordinary-chat stop/resume completion verified on
+  // arm64. Quota-reset and Goal recovery remain pending; see docs/MACOS.md.
   darwin: [['codex-cli 0.163.0-alpha.11.2', '26.1016.62342']]
 });
 export function platformDefaults(platform = process.platform) {
