@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Backend, compatibleVersions } from '../src/backend.mjs';
-import { defaults } from '../src/store.mjs';
+import { platformDefaults } from '../src/platform/index.mjs';
+const defaults = platformDefaults('win32');
 
 test('version compatibility accepts only reviewed pairs and preserves custom pins', () => {
   assert.equal(compatibleVersions('codex-cli 0.163.0-alpha.10.2', '26.1013.4894.0', defaults, 'win32'), true);

@@ -2,15 +2,14 @@ import { AppServer, desktopVersion } from './app-server.mjs';
 import { DesktopIpc } from './desktop-ipc.mjs';
 import { AppTools } from './app-tools.mjs';
 import { hash, GuardError, goalIdentity, threadIdentity, sleep } from './util.mjs';
-const reviewedPairs = new Map([
-  ['codex-cli 0.163.0-alpha.10.2', '26.1013.4894.0'],
-  ['codex-cli 0.163.0-alpha.11.2', '26.1016.8622.0']
-]);
-export function compatibleVersions(cli, desktop, config, platform = process.platform) {
+import { reviewedPlatforms } from './platform/index.mjs';
+export function compatibleVersions(cli, desktop, config, platform = process.platform, arch = process.arch) {
+  const reviewedPairs = new Map(reviewedPlatforms[platform] || []);
   // Existing installations retain their original baseline. Only these reviewed
   // default pairs gain compatibility; explicit custom version pins stay exact.
   const reviewedBaseline = reviewedPairs.get(config.compatibleCli) === config.compatibleDesktop;
-  return platform === 'win32' && (reviewedBaseline
+  if (!reviewedPairs.size || (platform === 'darwin' && (!desktop || arch !== 'arm64'))) return false;
+  return (reviewedBaseline
     ? reviewedPairs.has(cli) && (!desktop || reviewedPairs.get(cli) === desktop)
     : cli === config.compatibleCli && (!desktop || desktop === config.compatibleDesktop));
 }
@@ -24,7 +23,8 @@ export class Backend {
   }
   async compatibility() {
     const [cli, desktop] = await Promise.all([this.rpc.version(), desktopVersion()]);
-    return { cli, desktop, compatible: compatibleVersions(cli, desktop, this.config), desktopVersionVerified: !!desktop, warning: desktop ? null : 'Desktop package version could not be read; CLI version and exact IPC protocol/turn identity are checked.' };
+    return { platform: process.platform, arch: process.arch, cli, desktop, compatible: compatibleVersions(cli, desktop, this.config), desktopVersionVerified: !!desktop,
+      goalRecoveryValidated: false, warning: !desktop ? 'Desktop package version could not be read; macOS control requires a verified version.' : process.platform === 'darwin' ? 'Experimental macOS support; real stop/resume and full Goal recovery acceptance are pending. New installations use observe mode.' : null };
   }
   async quota() {
     const [limits, account] = await Promise.all([this.rpc.request('account/rateLimits/read', {}), this.rpc.request('account/read', {})]);
@@ -48,9 +48,15 @@ export class Backend {
     ]);
     let queueKnown = false, queueCount = null;
     try { const queued = await this.rpc.request('thread/queue/list', { threadId, limit: 1 }); queueKnown = true; queueCount = queued.data?.length ?? 0; } catch {}
-    const bridge = await new AppTools(threadId).open();
     let live;
-    try { live = await bridge.readThread(); } finally { bridge.close(); }
+    if (process.platform === 'darwin') {
+      const ipc = await this.ipcFactory().open();
+      try { live = await ipc.readThread(threadId); } finally { ipc.close(); }
+    }
+    else {
+      const bridge = await new AppTools(threadId).open();
+      try { live = await bridge.readThread(); } finally { bridge.close(); }
+    }
     // Never decide a live stop from the separate server's persisted turn status.
     if (!live.thread || !Array.isArray(live.turns)) throw new GuardError('live_thread_state_unknown');
     const data = [...live.turns].sort((a, b) => (b.startedAt ?? 0) - (a.startedAt ?? 0));

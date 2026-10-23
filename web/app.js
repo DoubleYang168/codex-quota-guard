@@ -46,6 +46,9 @@ function render() {
   $('recovery-badge').textContent = state.episodes.filter(item => !['resumed', 'cancelled'].includes(item.status)).length + (state.manualActions || []).filter(item => ['pending', 'needs_attention'].includes(item.status)).length;
   $('backend-error').hidden = !state.lastError;
   if (state.lastError) $('backend-error').textContent = `最近一次后台读取失败，显示的是上次保存的数据：${message(state.lastError)}`;
+  const compatibility = state.compatibility;
+  $('compatibility-note').hidden = !compatibility || (compatibility.compatible && compatibility.platform !== 'darwin');
+  if (compatibility) $('compatibility-note').textContent = !compatibility.compatible ? '当前平台或版本未通过兼容检查，自动和手动聊天控制均不可用。' : 'macOS 实验支持：完整 Goal 自动恢复尚未验收。首次使用默认观察模式，请先在测试聊天验证。';
   renderThreads(); renderRecoveries(); renderEvents();
 }
 async function refresh(action = 'status') {

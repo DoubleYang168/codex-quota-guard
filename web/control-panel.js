@@ -63,7 +63,7 @@
   async function initialize() {
     try {
       if (window.parent === window) throw new Error('请从插件入口打开此面板。');
-      try { await request('ui/initialize', { appInfo: { name: 'quota-guard-controls', version: '0.4.5' }, appCapabilities: {}, protocolVersion: '2026-01-26' }, 5000); notify('ui/notifications/initialized', {}); }
+      try { await request('ui/initialize', { appInfo: { name: 'quota-guard-controls', version: '0.4.6' }, appCapabilities: {}, protocolVersion: '2026-01-26' }, 5000); notify('ui/notifications/initialized', {}); }
       catch (error) { if (typeof window.openai?.callTool !== 'function') throw error; compatibilityBridge = true; }
       ready = true; controls(); await refresh();
       setInterval(() => { if (!busy && !document.hidden) refresh().catch(error => feedback(error.message, true)); }, 5000);

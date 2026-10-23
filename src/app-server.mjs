@@ -5,6 +5,7 @@ import path from 'node:path';
 import { findCodex } from './paths.mjs';
 import { GuardError } from './util.mjs';
 import { version } from './version.mjs';
+import { macVersion } from './platform/macos.mjs';
 const execute = promisify(execFile);
 const allowed = new Set(['account/rateLimits/read', 'account/read', 'thread/list', 'thread/read', 'thread/turns/list', 'thread/goal/get', 'thread/goal/set', 'thread/queue/list']);
 export class AppServer {
@@ -50,6 +51,7 @@ export class AppServer {
   async close() { this.reader?.close(); this.child?.stdin.end(); this.fail(new GuardError('app_server_closed')); if (this.child && this.child.exitCode === null) this.child.kill(); }
 }
 export async function desktopVersion() {
+  if (process.platform === 'darwin') { try { return (await macVersion()).version; } catch { return null; } }
   if (process.platform !== 'win32') return null;
   const command = "$p = Get-CimInstance Win32_Process -Filter \"Name = 'ChatGPT.exe'\" | Where-Object { $_.CommandLine -notmatch ' --type=' } | Select-Object -First 1; if ($p) { $p.ExecutablePath }";
   const shell = path.join(process.env.SystemRoot || 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe');

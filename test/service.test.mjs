@@ -41,7 +41,7 @@ test('service enable/disable/exit/restart works across real helper processes wit
   await serviceControl('enable', { home });
   const second = await control('ping', {}, { home }); assert.notEqual(first.instance, second.instance);
   const state = await control('cached_status', {}, { home });
-  assert.equal(state.config.pauseRemainingPercent, 7); assert.equal(state.config.observeOnly, false); assert.deepEqual(state.managed, []); assert.deepEqual(state.episodes, []);
+  assert.equal(state.config.pauseRemainingPercent, 7); assert.equal(state.config.observeOnly, defaults.observeOnly); assert.deepEqual(state.managed, []); assert.deepEqual(state.episodes, []);
 });
 test('installed runtime pointer keeps old data directory and refuses malformed pointers', async () => {
   const parent = path.join(projectRoot, '.runtime', 'tests'); await fs.mkdir(parent, { recursive: true });

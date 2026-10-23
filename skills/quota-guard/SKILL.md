@@ -1,6 +1,6 @@
 ---
 name: quota-guard
-description: Open the local quota management page and manage monitoring for explicitly selected Windows Codex desktop chats, including quota-based pause and recovery, pending recoveries, and observe/live settings.
+description: Open the local quota management page and manage monitoring for explicitly selected Windows and reviewed macOS Codex desktop chats, including quota-based pause and recovery, pending recoveries, and observe/live settings.
 ---
 
 Use the plugin's `quota_guard` MCP tools. The shared local helper checks quota without model polling.
@@ -14,7 +14,7 @@ Use the plugin's `quota_guard` MCP tools. The shared local helper checks quota w
 
 - Start with `service_status` for service controls, or `quota_status` when the user explicitly requests current quota. Report whether the helper is running and its saved observe/live mode accurately.
 - For the current chat, obtain its exact UUID from executor metadata or supported app tools. Use `watch_thread` only for a chat the user selected; do not infer selection from recency or titles.
-- New installations default to automatic control (`observeOnly:false`), with no chats enrolled. Existing saved observe/live choices survive upgrades. Enrolling a chat uses its saved mode, so make that consequence clear when adding selected chats. Querying quota or opening a page does not enroll chats or change modes. Only change an existing mode when the user requests it; observe mode logs proposals without automatic stop/continuation. Manual start/stop buttons act immediately in either mode.
+- New installations default to automatic control on Windows and observe mode on macOS, with no chats enrolled. See docs/MACOS.md for the experimental Mac boundary. Existing saved observe/live choices survive upgrades. Enrolling a chat uses its saved mode, so make that consequence clear when adding selected chats. Querying quota or opening a page does not enroll chats or change modes. Only change an existing mode when the user requests it; observe mode logs proposals without automatic stop/continuation. Manual start/stop buttons act immediately in either mode.
 - Thresholds use **remaining** percentage. Defaults: pause at 5%, resume at 100%, check every 300 seconds. Preserve user-specified values.
 - `set_enabled:false` pauses the helper's control, not the chats themselves. `unwatch_thread` cancels that chat's unsent automatic recovery without stopping its work.
 - A chat must remain loaded in the running desktop app. After a restart it may need to be opened once. A desktop connection, accepted request, started turn, and continuing Goal are different observations.

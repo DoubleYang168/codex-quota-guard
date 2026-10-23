@@ -7,6 +7,13 @@ import { controlEndpoint, dataDirectory, projectRoot } from './paths.mjs';
 import { GuardError, sleep } from './util.mjs';
 export async function tokenFor(home) {
   await fs.mkdir(home, { recursive: true });
+  if (process.platform !== 'win32') {
+    const directory = path.dirname(controlEndpoint(home));
+    await fs.mkdir(directory, { recursive: true, mode: 0o700 });
+    const stat = await fs.lstat(directory);
+    if (!stat.isDirectory() || stat.uid !== process.getuid?.()) throw new GuardError('unsafe_control_directory');
+    await fs.chmod(directory, 0o700);
+  }
   const file = path.join(home, 'control-token');
   try { await fs.writeFile(file, crypto.randomBytes(32).toString('hex'), { flag: 'wx', mode: 0o600 }); } catch (error) { if (error.code !== 'EEXIST') throw error; }
   // A competing process may see the exclusively created file before its first

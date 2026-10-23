@@ -1,7 +1,7 @@
 {
   "name": "quota-guard",
-  "version": "0.4.5",
-  "description": "Selected-chat quota pause and resume for Windows Codex Desktop",
+  "version": "0.4.6",
+  "description": "Selected-chat quota pause and resume for Windows and macOS Codex Desktop",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "requires_local_executor": true,

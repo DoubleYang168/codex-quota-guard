@@ -10,11 +10,12 @@ permissions:
 
 jobs:
   validate:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
+        os: [windows-latest, macos-latest]
         node: [22, 24]
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +34,7 @@ jobs:
       - run: npm run package:source
       - uses: actions/upload-artifact@v4
         with:
-          name: release-node-${{ matrix.node }}
+          name: release-${{ matrix.os }}-node-${{ matrix.node }}
           if-no-files-found: error
           path: |
             dist/*.zip

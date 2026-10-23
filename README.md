@@ -1,12 +1,12 @@
 # Codex Quota Guard
 
-**为 Windows Codex 桌面端选定的本地会话提供额度监控、暂停和续跑。**
+**为 Windows／macOS Codex 桌面端选定的本地会话提供额度监控、暂停和续跑。**
 
-作者：dingyang · MIT · 实验版 **0.4.5** · [English](README.en.md)
+作者：dingyang · MIT · 实验版 **0.4.6** · [English](README.en.md)
 
 在浏览器管理页选择会话，配置剩余额度阈值，由本地后台定时判断是否中断当前轮次、是否提交续跑。无需让模型持续轮询额度。
 
-> 仅适配 Windows Codex 桌面本地会话，使用未公开的桌面接口。普通 ChatGPT 网页聊天、云任务和其他系统不在支持范围内。不是 OpenAI 官方项目。完整 Goal 自动恢复链路尚未完成专项真实验收，先用测试会话验证。
+> 适配 Windows 和特定版本的 macOS Apple Silicon 桌面本地会话，使用未公开的桌面接口。Mac 适配仍属实验支持，首次使用默认观察模式；普通 ChatGPT 网页聊天、云任务和 Linux 不在支持范围内。不是 OpenAI 官方项目。完整 Goal 自动恢复链路尚未完成专项真实验收，先用测试会话验证。
 
 ![模拟数据管理页](docs/assets/dashboard-demo.png)
 
@@ -26,11 +26,12 @@
 
 ## 环境与安装
 
-- Windows，已登录且支持本地插件的 Codex 桌面端。
+- Windows 或已验证版本的 macOS Apple Silicon，已登录且支持本地插件的 Codex 桌面端。
+- Mac 请先阅读 [macOS 安装与验收](docs/MACOS.md)：使用桌面 IPC 读取实时状态，数据默认位于用户 Library。
 - Node.js **22+**，`node` 和 `npm` 在 PATH 中，无 npm 运行依赖，无需 `npm install`。
 - CLI／桌面端必须符合[兼容性说明](docs/COMPATIBILITY.md)。不保证任意新版可用。
 
-下载源码 ZIP 并解压，进入包含 `package.json` 的目录，在 PowerShell 执行：
+下载源码 ZIP 并解压，进入包含 `package.json` 的目录，在 PowerShell 或 macOS 终端执行：
 
 ```powershell
 node --version
@@ -41,7 +42,7 @@ npm run install:local
 
 `doctor` 只读查询真实额度，输出保存在本机。安装会修改当前用户的 Codex 插件注册。按提示重新加载插件或重启桌面端，再在新聊天中使用插件。
 
-源码安装默认把运行数据放在源码目录 `.runtime/user`，请保留目录。已有安装升级时必须沿用原数据目录。**运行 ZIP 与源码 ZIP 的安装步骤不同**，详见[安装、升级与卸载](INSTALL.md)。
+Windows 源码安装默认把运行数据放在源码目录 `.runtime/user`；Mac 新安装默认使用 `~/Library/Application Support/Codex Quota Guard/`。请保留数据目录。已有安装升级时必须沿用原数据目录。**运行 ZIP 与源码 ZIP 的安装步骤不同**，详见[安装、升级与卸载](INSTALL.md)。
 
 ## 第一次使用
 
@@ -56,7 +57,7 @@ npm run install:local
 | 新数据目录默认设置 | 值 |
 | --- | --- |
 | 监控名单 | 空 |
-| 控制方式 | 自动控制；仅处理明确加入的会话 |
+| 控制方式 | Windows 自动控制；Mac 观察模式；均只处理明确加入的会话 |
 | 监控开关 | 启用 |
 | 暂停阈值 | 5 小时剩余额度 ≤ 5% |
 | 恢复阈值 | 5 小时剩余额度 ≥ 100%，并满足周额度和任务身份等检查 |
@@ -93,7 +94,7 @@ npm run install:local
 
 - 采样存在延迟，不能保证恰好在 5% 时停止。
 - 恢复逐个执行。严格要求 100% 时，首个会话消耗额度后，其余会话可能继续等待。
-- 桌面端需运行并加载目标会话；关闭桌面、休眠或注销后不保证运行。没有托盘、Windows 服务和开机启动项。
+- 桌面端需运行并加载目标会话；关闭桌面、休眠或注销后不保证运行。没有托盘、Windows 服务、LaunchAgent 和开机启动项。
 - 自动恢复仅处理本插件因额度中断的记录；账户、任务、Goal、轮次或排队输入变化会阻止或取消恢复。
 - 续跑本身会消耗额度。额度耗尽、协议变化或结果不明确时可能需要手动处理。
 - 真实普通会话的手动控制及一次自动暂停已有原开发环境反馈；**完整 Goal“暂停 → 自动恢复 → 后续自动轮次”仍未验收**。见[验证记录](docs/VALIDATION.md)。
@@ -106,6 +107,7 @@ npm run install:local
 | [使用手册](docs/USAGE.md) | 控制语义、恢复状态、CLI 和操作示例 |
 | [常见问题](docs/TROUBLESHOOTING.md) | 阈值未停止、待恢复、离线、版本和数据目录问题 |
 | [架构](docs/ARCHITECTURE.md) | 进程、通信、文件和数据流 |
+| [Mac 安装与验收](docs/MACOS.md) | Mac 专用说明、环境变量及验收边界 |
 | [兼容性](docs/COMPATIBILITY.md) | 精确版本组合和验证层级 |
 | [隐私](docs/PRIVACY.md)／[安全](SECURITY.md) | 本地记录、访问凭证和问题报告 |
 | [贡献指南](CONTRIBUTING.md)／[更新记录](CHANGELOG.md) | 开发和版本变化 |

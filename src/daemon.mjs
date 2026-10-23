@@ -47,7 +47,7 @@ export async function runDaemon(home) {
       case 'threads': return (await getBackend()).listThreads(params);
       case 'cached_status': return { running: true, version, config: store.data.config, quota: store.data.lastQuota, compatibility: store.data.compatibility, lastTick: store.data.lastTick, lastError: store.data.lastError, managed: Object.values(store.data.watches), episodes: store.data.episodes.slice(-30), manualActions: store.data.manualActions, events: await store.events() };
       case 'status': {
-        try { store.data.lastQuota = await (await getBackend()).quota(); store.data.lastError = null; await store.save(); } catch (error) { store.data.lastError = errorInfo(error); }
+        try { const current = await getBackend(); store.data.compatibility = await current.compatibility(); store.data.lastQuota = await current.quota(); store.data.lastError = null; await store.save(); } catch (error) { store.data.lastError = errorInfo(error); }
         return handle('cached_status', {});
       }
       case 'watch': return engine.watch(requireThreadId(params.threadId));
@@ -94,6 +94,7 @@ export async function runDaemon(home) {
   const endpoint = controlEndpoint(home);
   if (process.platform !== 'win32') { try { await fs.unlink(endpoint); } catch (error) { if (error.code !== 'ENOENT') throw error; } }
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(endpoint, resolve); });
+  if (process.platform !== 'win32') await fs.chmod(endpoint, 0o600);
   async function shutdown() {
     if (shuttingDown) return; shuttingDown = true; clearInterval(interval);
     await dashboard?.close();

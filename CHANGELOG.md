@@ -1,5 +1,15 @@
 # 更新记录
 
+## 0.4.6 — 2026-10-24
+
+- Add experimental macOS Apple Silicon support for the reviewed desktop version.
+- Discover the desktop bundled CLI and use Unix IPC owner snapshots for live state, including detached helpers.
+- Default new Mac installations to observe mode and a stable Library data directory; preserve existing state.
+- Use short private helper sockets for long paths and surface platform compatibility in the dashboard.
+- Unwrap desktop continuation responses and fail promptly when the live bridge disconnects.
+- Add macOS platform/regression tests and a Windows/macOS CI matrix.
+- Real Goal recovery remains unverified; see docs/MACOS.md for the acceptance record.
+
 ## Unreleased
 
 - 在中英文 README 增加卸载入口，补全退出后台、核对原数据目录、移除插件和保留／清理数据的步骤。

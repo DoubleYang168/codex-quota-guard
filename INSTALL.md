@@ -1,15 +1,16 @@
 # 安装、升级与卸载
 
-对应源码 0.4.5。当前仍为实验版，真实 Goal 自动恢复和原生面板显示的限制见 [需求检查](docs/VALIDATION.md)。
+对应源码 0.4.6。当前仍为实验版，真实 Goal 自动恢复和原生面板显示的限制见 [需求检查](docs/VALIDATION.md)。
 
 ## 环境
 
-- Windows，使用当前登录的本地用户运行。
+- Windows 或已验证版本的 macOS Apple Silicon，使用当前登录的本地用户运行。
+- Mac 安装优先阅读 [Mac 专用说明](docs/MACOS.md)，下文 PowerShell 环境变量写法仅适用于 Windows。
 - 已安装并登录支持本地插件的 Codex 桌面端。
 - Node.js 22+，`node` 和 `npm` 可从 PATH 访问。
 - 实验适配：CLI `0.163.0-alpha.10.2`／桌面 `26.1013.4894.0`；CLI `0.163.0-alpha.11.2`／桌面 `26.1016.8622.0`。新版经静态接口及只读连接核对，真实控制仍待独立会话验收。
 
-其他系统、普通 ChatGPT 网页聊天和远程云任务没有验证支持。Node 可跨平台运行不代表桌面控制也可跨平台。
+Mac 兼容组合为 CLI `0.163.0-alpha.11.2`／桌面 `26.1016.62342`；Intel、Linux、普通 ChatGPT 网页聊天和远程云任务没有验证支持。Node 可跨平台运行不代表桌面控制也可跨平台。
 
 安装结构与本地 marketplace 机制参见 [OpenAI 官方插件打包文档](https://developers.openai.com/plugins/build/plugins)。本文自动安装依赖兼容表中 CLI 的实际行为；新宿主可能需要在插件目录选择本地来源并安装。
 
@@ -37,11 +38,11 @@ npm run install:local
 
 无需安装 npm 依赖。doctor 查询真实额度并写本地诊断，不改变聊天执行状态。若不兼容或桌面连接失败，先解决诊断问题。
 
-打包写入 `dist/latest.json`、插件目录和版本 ZIP。安装脚本注册到当前用户的 Codex，并将数据指向 `<项目目录>\.runtime\user`。已有该目录的 `state.json` 会备份到 `.runtime/install-backups/`。
+打包写入 `dist/latest.json`、插件目录和版本 ZIP。安装脚本注册到当前用户的 Codex，并在 Windows 将数据指向 `<项目目录>\.runtime\user`；Mac 新安装默认指向 `~/Library/Application Support/Codex Quota Guard/`。已有该目录的 `state.json` 会备份到 `.runtime/install-backups/`。
 
 如需其他稳定位置，在安装前设置 `CODEX_QUOTA_GUARD_HOME` 为绝对路径，后续入口保持一致。安装脚本会把该位置写入安装目录的 `runtime-home.json`。这是机器专用指针，不应共享。
 
-安装后重新加载插件／打开聊天；仍未加载新工具时重启桌面端。输入“使用 quota-guard 打开额度管理页”，按 [README](README.md#第一次使用) 点击“保存设置”和“保存规则”后再选择会话。新安装默认自动控制，升级保留已保存模式。保留源码目录，运行数据仍指向它。
+安装后重新加载插件／打开聊天；仍未加载新工具时重启桌面端。输入“使用 quota-guard 打开额度管理页”，按 [README](README.md#第一次使用) 点击“保存设置”和“保存规则”后再选择会话。新安装在 Windows 默认自动控制，Mac 默认观察模式；升级保留已保存模式。保留实际数据目录；Windows 源码安装的数据仍指向源码目录。
 
 ## 从运行发行包安装
 

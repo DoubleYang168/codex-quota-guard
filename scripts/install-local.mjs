@@ -5,11 +5,12 @@ import os from 'node:os';
 import crypto from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
-import { findCodex, projectRoot } from '../src/paths.mjs';
+import { findCodex, projectRoot, dataDirectory } from '../src/paths.mjs';
 const execute = promisify(execFile), cli = await findCodex();
 const release = JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'latest.json'), 'utf8'));
-const home = path.resolve(process.env.CODEX_QUOTA_GUARD_HOME || path.join(projectRoot, '.runtime', 'user'));
+const home = path.resolve(process.env.CODEX_QUOTA_GUARD_HOME || (process.platform === 'darwin' ? dataDirectory() : path.join(projectRoot, '.runtime', 'user')));
 await fs.mkdir(home, { recursive: true });
+await fs.mkdir(path.join(projectRoot, '.runtime'), { recursive: true });
 try {
   const state = await fs.readFile(path.join(home, 'state.json'), 'utf8'); JSON.parse(state);
   const backup = path.join(projectRoot, '.runtime', 'install-backups', new Date().toISOString().replaceAll(/[:.]/g, '-'));

@@ -30,6 +30,7 @@ flowchart LR
 | `src/backend.mjs` | 组合额度读取、会话索引、实时状态及控制 |
 | `src/app-server.mjs` | Codex app-server 子进程 JSON-RPC |
 | `src/desktop-ipc.mjs`、`src/app-tools.mjs` | 未公开桌面接口适配 |
+| `src/platform/` | Mac 应用／CLI 发现、平台版本基线、桌面 socket 选择 |
 | `src/store.mjs`、`src/paths.mjs` | 配置验证、持久化、路径和控制通道 |
 | `web/` | 管理页与原生 MCP Apps 面板的 HTML／CSS／JS |
 
@@ -43,13 +44,14 @@ MCP 入口由宿主启动；多个入口共享同一数据目录的一个后台�
 
 ## 数据与通信
 
-- Windows 本机控制通道使用按数据目录派生名称的命名管道，带控制令牌。
+- Windows 本机控制通道使用按数据目录派生名称的命名管道，带控制令牌。Mac 使用 `/tmp/codex-quota-guard-<uid>/` 下按数据目录哈希的短 socket，目录 0700、socket 0600，避免 Unix socket 长度限制。
+- Mac 桌面 IPC 使用 `CODEX_HOME/ipc/ipc.sock`（默认 `~/.codex`）。实时状态通过 following 1／snapshot 11 协议临时订阅，在取得已发现拥有者的完整快照后取消订阅；不会加载或恢复 app-server 中的聊天。Mac 后台不依赖 app-tools 的进程来源校验。
 - 管理页只监听 `127.0.0.1` 随机端口，使用随机凭证，验证 Host／Origin 和 API 参数。
 - `state.json` 保存配置、监控名单、恢复和手动去重记录；`events.jsonl` 保存轮换事件日志。
 - `control-token`、锁文件、页面链接与诊断文件仅留本机。文件未加密。
-- 数据目录优先级：`CODEX_QUOTA_GUARD_HOME` → 当前安装根目录 `runtime-home.json` → 当前代码根目录 `.runtime`。
+- 数据目录优先级：`CODEX_QUOTA_GUARD_HOME` → 当前安装根目录 `runtime-home.json` → 已有源码运行数据 → Mac 用户 Library 默认目录／其他平台代码根目录 `.runtime`。
 
-源码安装脚本默认把指针固定到源码目录 `.runtime/user`。不存在数据库、远端管理服务、模型轮询循环、托盘或 Windows 服务。续跑会发给 Codex，可能消耗订阅额度。
+Windows 源码安装脚本默认把指针固定到源码目录 `.runtime/user`；Mac 新安装默认固定到用户 Library，保留已有数据位置。不存在数据库、远端管理服务、模型轮询循环、托盘或 Windows 服务。续跑会发给 Codex，可能消耗订阅额度。
 
 ## 插件清单
 

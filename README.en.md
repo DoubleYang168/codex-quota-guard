@@ -1,16 +1,16 @@
 # Codex Quota Guard
 
-[中文说明](README.md) · Experimental 0.4.5 · MIT · by dingyang (DoubleYang168)
+[中文说明](README.md) · Experimental 0.4.6 · MIT · by dingyang (DoubleYang168)
 
-A local quota monitor for explicitly selected Windows Codex desktop chats. A browser dashboard lets you configure thresholds, select chats, and manually stop or continue a turn. A shared Node.js helper polls quota without continuous model inference.
+A local quota monitor for explicitly selected Windows and macOS Codex desktop chats. A browser dashboard lets you configure thresholds, select chats, and manually stop or continue a turn. A shared Node.js helper polls quota without continuous model inference.
 
-This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. Ordinary ChatGPT web chats, cloud tasks, macOS and Linux desktop control are outside the supported scope. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
+This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. macOS support is experimental and limited to the reviewed Apple Silicon version. Ordinary ChatGPT web chats, cloud tasks and Linux desktop control are outside the supported scope. New Mac installations default to observe mode with no selected chats. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
 
 ## Install
 
-Requires Windows, a signed-in Codex desktop host with local plugin support, Node.js 22+ and a reviewed CLI/desktop combination. See [compatibility](docs/COMPATIBILITY.md). No npm dependencies need to be installed.
+Requires Windows or a reviewed macOS Apple Silicon host, a signed-in Codex desktop host with local plugin support, Node.js 22+ and a reviewed CLI/desktop combination. See [compatibility](docs/COMPATIBILITY.md). No npm dependencies need to be installed.
 
-From a source checkout in PowerShell:
+For Mac prerequisites, runtime selection and acceptance status see [macOS](docs/MACOS.md). From a source checkout in PowerShell or a macOS terminal:
 
 ```powershell
 node --version
@@ -19,7 +19,7 @@ npm run package
 npm run install:local
 ```
 
-Doctor is read-only but reads real account quota and writes local diagnostics. Installation changes your local plugin registration. Reload the plugin or restart the desktop app and use a new chat. Data defaults to `.runtime/user` under the source directory; keep that directory. Upgrades must use the existing data directory. Runtime ZIP installation differs: see [INSTALL.md](INSTALL.md).
+Doctor is read-only but reads real account quota and writes local diagnostics. Installation changes your local plugin registration. Reload the plugin or restart the desktop app and use a new chat. Windows data defaults to `.runtime/user`; new Mac data defaults to `~/Library/Application Support/Codex Quota Guard/`. Keep the data directory. Upgrades must use the existing data directory. Runtime ZIP installation differs: see [INSTALL.md](INSTALL.md).
 
 ## Use
 
@@ -30,7 +30,7 @@ Ask Codex: **“使用 quota-guard 打开额度管理页”** (open the Quota Gu
 3. Select chats using checkboxes or **加入自动监控** (add to monitoring). Membership saves immediately.
 4. Review recovery and event records. Successful saves show inline text and a short toast.
 
-Defaults: empty watch list, automatic control enabled, pause at remaining ≤5%, resume at ≥100%, poll every 300 seconds. Automatic control only affects selected chats. Saved settings survive upgrades. The dashboard reads cached status every 10 seconds; this is separate from quota polling.
+Defaults: empty watch list, observe mode on macOS and automatic control on Windows, pause at remaining ≤5%, resume at ≥100%, poll every 300 seconds. Automatic control only affects selected chats. Saved settings survive upgrades. The dashboard reads cached status every 10 seconds; this is separate from quota polling.
 
 Manual **停止** interrupts the current turn and does not schedule recovery. Manual **启动／继续** sends a continuation and may reactivate the original Goal. Both manual actions work even in observe mode or with monitoring disabled. **立即检查** runs saved rules immediately and can control selected chats when automatic mode is enabled.
 

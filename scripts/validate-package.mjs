@@ -8,7 +8,7 @@ const execute = promisify(execFile);
 const release = JSON.parse(await fs.readFile(path.join(projectRoot, 'dist', 'latest.json'), 'utf8'));
 const home = path.join(projectRoot, '.runtime', `package-validation-${Date.now()}`);
 await fs.mkdir(home, { recursive: true });
-const env = { ...process.env, CODEX_HOME: home }, cli = await findCodex();
+const env = { ...process.env, CODEX_HOME: home, CODEX_QUOTA_GUARD_HOME: path.join(home, 'guard-data') }, cli = await findCodex();
 const checks = [];
 for (const args of [['plugin', 'marketplace', 'add', release.directory, '--json'], ['plugin', 'add', 'quota-guard@quota-guard-local', '--json'], ['plugin', 'list', '--json']]) {
   const result = await execute(cli, args, { env, windowsHide: true, timeout: 30000, maxBuffer: 2 * 1024 * 1024 });

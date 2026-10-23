@@ -22,7 +22,11 @@ try {
     try {
       const result = { version, dataDirectory: home, compatibility: await backend.compatibility(), quota: await backend.quota(), desktopProbe: null, mutationsSent: 0 };
       const threadId = args[0] ?? process.env.CODEX_THREAD_ID;
-      if (threadId) { const snapshot = await backend.snapshot(requireThreadId(threadId)); result.desktopProbe = { ownerAvailable: await backend.ownerAvailable(threadId), liveTurnStatus: snapshot.turn?.status, queueReadable: snapshot.queueKnown, goalStatus: snapshot.goal?.status ?? null }; }
+      if (threadId) {
+        try { const snapshot = await backend.snapshot(requireThreadId(threadId)); result.desktopProbe = { ownerAvailable: await backend.ownerAvailable(threadId), liveReadable: true, liveTurnStatus: snapshot.turn?.status, queueReadable: snapshot.queueKnown, goalStatus: snapshot.goal?.status ?? null }; }
+        catch (error) { result.desktopProbe = { liveReadable: false, error: errorInfo(error) }; process.exitCode = 1; }
+      }
+      result.runtime = { executable: process.execPath, node: process.version, platform: process.platform, arch: process.arch };
       await fs.writeFile(path.join(home, 'doctor.json'), JSON.stringify(result, null, 2) + '\n'); print(result);
     } finally { await backend.close(); }
   } else if (command === 'start') print(await startMonitor(home));
@@ -50,5 +54,5 @@ try {
     validateConfig(patch); await startMonitor(home); print(await control('configure', patch, { home }));
   } else if (command === 'check') { await startMonitor(home); print(await control('check', {}, { home })); }
   else if (command === 'dismiss') { await startMonitor(home); print(await control('dismiss', { episodeId: args[0] }, { home })); }
-  else print({ commands: ['ui [--no-open]', 'doctor [thread-id] (read only)', 'start', 'service-status (cached, no startup)', 'status (starts helper)', 'watch <thread-id>', 'unwatch <thread-id>', 'configure --observe|--live --pause 5 --resume 100 --interval 300', 'configure --disabled|--enabled', 'check', 'dismiss <episode-id>', 'stop (disable and exit)', 'mcp'], defaultMode: 'live', dataDirectory: home });
+  else print({ commands: ['ui [--no-open]', 'doctor [thread-id] (read only)', 'start', 'service-status (cached, no startup)', 'status (starts helper)', 'watch <thread-id>', 'unwatch <thread-id>', 'configure --observe|--live --pause 5 --resume 100 --interval 300', 'configure --disabled|--enabled', 'check', 'dismiss <episode-id>', 'stop (disable and exit)', 'mcp'], defaultMode: process.platform === 'darwin' ? 'observe' : 'live', dataDirectory: home });
 } catch (error) { console.error(JSON.stringify(errorInfo(error))); process.exitCode = 1; }

@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { GuardError } from './util.mjs';
-export const defaults = Object.freeze({ enabled: true, observeOnly: false, pauseRemainingPercent: 5, resumeRemainingPercent: 100, pollIntervalSeconds: 300, codexPath: null, compatibleCli: 'codex-cli 0.163.0-alpha.10.2', compatibleDesktop: '26.1013.4894.0' });
+import { platformDefaults } from './platform/index.mjs';
+export const defaults = Object.freeze({ enabled: true, pauseRemainingPercent: 5, resumeRemainingPercent: 100, pollIntervalSeconds: 300, codexPath: null, ...platformDefaults() });
 export function validateConfig(patch, current = defaults) {
   for (const key of Object.keys(patch)) if (!(key in defaults)) throw new GuardError('unknown_configuration_key', key);
   const next = { ...current, ...patch };
