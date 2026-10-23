@@ -1,0 +1,40 @@
+name: Validate source and release
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: npm run check
+      - run: npm test
+      - run: npm run package
+      - run: npm run verify:release
+      - run: npm run package:source
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-node-${{ matrix.node }}
+          if-no-files-found: error
+          path: |
+            dist/*.zip
+            dist/*.sha256

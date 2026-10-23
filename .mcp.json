@@ -1,0 +1,5 @@
+{
+  "mcpServers": {
+    "quota_guard": { "command": "node", "args": ["${PLUGIN_ROOT}/bin/quota-guard.mjs", "mcp"], "cwd": "${PLUGIN_ROOT}" }
+  }
+}

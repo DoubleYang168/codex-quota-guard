@@ -1,0 +1,9 @@
+{
+  "name": "quota-guard",
+  "version": "0.4.5",
+  "description": "Selected-chat quota pause and resume for Windows Codex Desktop",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "requires_local_executor": true,
+  "interface": { "displayName": "Quota Guard", "shortDescription": "额度监控与后台启停", "defaultPrompt": ["显示 Quota Guard 控制面板", "打开 Quota Guard 额度管理页", "退出 Quota Guard 后台服务"] }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "codex-quota-guard",
+  "version": "0.4.5",
+  "description": "Local quota pause/resume companion for selected Windows Codex desktop chats",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test --test-concurrency=1 test/*.test.mjs",
+    "doctor": "node bin/quota-guard.mjs doctor",
+    "status": "node bin/quota-guard.mjs status",
+    "start": "node bin/quota-guard.mjs start",
+    "ui": "node bin/quota-guard.mjs ui",
+    "stop": "node bin/quota-guard.mjs stop",
+    "mcp": "node bin/quota-guard.mjs mcp",
+    "package": "node scripts/package.mjs",
+    "install:local": "node scripts/install-local.mjs",
+    "check": "node scripts/check-source.mjs",
+    "demo": "node scripts/manual-controls-fixture.mjs",
+    "verify:release": "python -X utf8 scripts/verify-release.py",
+    "package:source": "python -X utf8 scripts/package-source.py",
+    "version:set": "node scripts/set-version.mjs"
+  },
+  "license": "MIT",
+  "author": "dingyang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DoubleYang168/codex-quota-guard.git"
+  },
+  "homepage": "https://github.com/DoubleYang168/codex-quota-guard",
+  "bugs": {
+    "url": "https://github.com/DoubleYang168/codex-quota-guard/issues"
+  }
+}

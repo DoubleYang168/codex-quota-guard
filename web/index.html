@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quota Guard · 额度管理</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><div class="top-inner">
+    <a class="brand" href="#overview"><span class="brand-icon" aria-hidden="true">Q</span><span>Quota Guard<small>本地额度管理</small></span></a>
+    <div class="connection"><span id="connection-dot" class="dot"></span><span id="connection">正在连接后台</span><span id="version" class="version"></span></div>
+  </div></header>
+  <main id="overview">
+    <section class="heading"><div><p class="eyebrow">YOUR WORK, ON YOUR SCHEDULE</p><h1>让任务跟着额度走</h1><p class="muted">选择需要管理的会话，在额度不足时暂停，恢复后继续。</p></div><button id="check" class="button secondary" data-action title="重新判断全部监控会话的当前轮次；自动控制启用时可能立即停止任务">立即检查</button></section>
+    <div id="auth-error" class="notice error" hidden>此页面缺少访问凭证。请在插件中说“打开额度管理页”，使用新链接进入。</div>
+    <div id="offline" class="notice error" hidden>后台连接已断开。请通过插件重新打开管理页；无需重复添加会话。</div>
+    <div id="operation-error" class="notice error" role="alert" hidden></div>
+    <div id="backend-error" class="notice warning" hidden></div>
+    <div id="notice" class="notice success toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+    <section class="stats" aria-label="额度概览">
+      <article class="card stat"><div class="stat-label">5 小时剩余额度 <span class="pill">共享账户</span></div><div class="number"><span id="remaining">—</span><span class="unit">%</span></div><div class="meter"><span id="quota-bar"></span></div><p id="reset" class="muted">等待额度数据</p></article>
+      <article class="card stat"><div class="stat-label">每周剩余额度</div><div class="number"><span id="weekly">—</span><span class="unit">%</span></div><div class="meter quiet"><span id="weekly-bar"></span></div><p class="muted">周额度耗尽时，自动恢复会继续等待</p></article>
+      <article class="card stat compact"><div class="stat-label">管理中的会话</div><div class="number" id="managed-count">0</div><p id="mode-description" class="muted">正在读取监控设置</p><p id="last-check" class="small muted">尚未执行监控检查</p></article>
+    </section>
+    <section class="workspace">
+      <article class="card control-card"><div class="section-title"><div><h2>监控控制</h2><p class="muted">关闭本页后，后台继续运行。</p></div><span id="monitor-state" class="badge">读取中</span></div>
+        <form id="monitor-controls">
+        <div class="control-row"><div><strong>启用监控</strong><p class="muted">停用后不再自动控制会话，不会停止当前任务。</p></div><label class="switch"><input id="enabled" type="checkbox" data-action aria-label="启用监控"><span></span></label></div>
+        <fieldset class="mode-picker"><legend>控制方式</legend><label><input type="radio" name="mode" value="observe" id="mode-observe" data-action><span><strong>观察模式</strong><small>只记录拟执行的动作</small></span></label><label><input type="radio" name="mode" value="live" id="mode-live" data-action checked><span><strong>自动控制</strong><small>按规则暂停与恢复已选会话</small></span></label></fieldset>
+        <div class="rule-summary" id="rule-summary">默认规则：剩余 ≤ 5% 暂停，达到 100% 恢复。</div>
+        <div class="form-footer"><span id="monitor-hint" class="small muted" role="status" aria-live="polite">修改后保存生效</span><button id="save-monitor" type="submit" class="button primary" data-action>保存设置</button></div>
+        </form>
+      </article>
+      <article class="card settings-card"><div class="section-title"><div><h2>额度规则</h2><p class="muted">设置应用于所有已加入的会话。</p></div></div>
+        <form id="settings"><div class="fields"><label>暂停阈值<span class="input-unit"><input id="pause" type="number" min="0" max="99" step="0.1" required data-action><span>%</span></span><small>剩余额度不高于此值</small></label><label>恢复阈值<span class="input-unit"><input id="resume" type="number" min="0.1" max="100" step="0.1" required data-action><span>%</span></span><small>剩余额度达到此值</small></label><label class="interval-label">检查间隔<span class="input-unit"><input id="interval" type="number" min="15" max="3600" step="1" required data-action><span>秒</span></span><small>15–3600 秒，建议 300 秒</small></label></div>
+        <div class="form-footer"><span id="settings-hint" class="small muted" role="status" aria-live="polite">修改后保存生效</span><button id="save-rules" type="submit" class="button primary" data-action>保存规则</button></div></form>
+      </article>
+    </section>
+    <section class="card sessions-card" id="sessions">
+      <div class="tabs" role="tablist" aria-label="管理内容"><button class="tab active" role="tab" id="tab-threads" aria-selected="true" aria-controls="panel-threads" data-tab="threads">会话管理 <span id="session-badge">0</span></button><button class="tab" role="tab" id="tab-recoveries" aria-selected="false" aria-controls="panel-recoveries" data-tab="recoveries">暂停与恢复 <span id="recovery-badge">0</span></button><button class="tab" role="tab" id="tab-events" aria-selected="false" aria-controls="panel-events" data-tab="events">运行记录</button></div>
+      <div id="panel-threads" class="tab-panel" role="tabpanel" aria-labelledby="tab-threads"><div class="toolbar"><div class="search"><input id="search" type="search" placeholder="搜索会话标题" aria-label="搜索会话标题" maxlength="200"></div><label class="filter"><input id="managed-only" type="checkbox">只看已加入</label><button id="reload-threads" class="button secondary" data-action>刷新会话</button></div>
+        <p class="selection-note">在目标会话右侧点击“启动／继续”“停止”或“加入自动监控”。勾选也可加入监控。手动控制立即执行，不受观察模式或监控总开关限制；停止只中断当前轮次，不安排自动恢复。</p>
+        <div id="thread-list" class="thread-list"><div class="empty">正在读取本地会话…</div></div>
+        <div class="list-footer"><span id="list-count" class="small muted"></span><button id="load-more" class="button secondary" data-action hidden>加载更多</button></div>
+        <details class="manual-add"><summary>通过会话 ID 添加</summary><form id="manual-form"><label class="sr-only" for="manual-id">完整会话 ID</label><input id="manual-id" type="text" placeholder="粘贴完整会话 UUID" required data-action><button type="submit" class="button secondary" data-action>加入管理</button></form></details>
+      </div>
+      <div id="panel-recoveries" class="tab-panel" role="tabpanel" aria-labelledby="tab-recoveries" hidden><p class="selection-note">自动恢复仅针对额度暂停。手动操作结果不明时，请先检查原会话再解除阻止；解除阻止不代表操作成功，也不会重发指令。</p><div id="recovery-list"></div></div>
+      <div id="panel-events" class="tab-panel" role="tabpanel" aria-labelledby="tab-events" hidden><p class="selection-note">显示最近 20 条记录。</p><div id="event-list"></div></div>
+    </section>
+    <footer><p>仅连接本机 · 默认不选中任何会话 · 页面状态每 10 秒刷新</p><p>预览版本：请先用测试会话验证暂停与续跑。严格 100% 恢复时，多个任务可能分批等待。</p></footer>
+  </main>
+</body>
+</html>

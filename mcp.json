@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "quota_guard": { "type": "stdio", "command": "node", "args": ["${PLUGIN_ROOT}/bin/quota-guard.mjs", "mcp"], "cwd": "${PLUGIN_ROOT}" }
+  }
+}

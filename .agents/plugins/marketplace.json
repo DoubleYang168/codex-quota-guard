@@ -1,0 +1,5 @@
+{
+  "name": "quota-guard-local",
+  "interface": { "displayName": "Quota Guard Local" },
+  "plugins": [{ "name": "quota-guard", "source": { "source": "local", "path": "./" }, "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" }, "category": "Developer Tools" }]
+}

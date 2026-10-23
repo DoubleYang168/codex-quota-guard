@@ -1,0 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { projectRoot } from '../src/paths.mjs';
+import { control, startMonitor } from '../src/control.mjs';
+test('shared helper survives its launcher, is single-instance, and can be stopped without enrolling a chat', async t => {
+  const parent = path.join(projectRoot, '.runtime', 'tests'); await fs.mkdir(parent, { recursive: true });
+  const home = await fs.mkdtemp(path.join(parent, 'daemon-'));
+  t.after(async () => { try { await control('shutdown', {}, { home }); } catch {} });
+  const first = await startMonitor(home); const second = await startMonitor(home);
+  assert.equal(first.pid, second.pid); assert.equal(first.instance, second.instance);
+  const config = await control('configure', { enabled: false }, { home }); assert.equal(config.observeOnly, false); assert.equal(config.enabled, false);
+  const [page, again] = await Promise.all([control('dashboard', {}, { home }), control('dashboard', {}, { home })]);
+  assert.equal(page.url, again.url);
+  const url = new URL(page.url), headers = { 'Content-Type': 'application/json', 'X-Quota-Guard-Token': url.hash.slice(1) };
+  const status = await fetch(`${url.origin}/api/status`, { method: 'POST', headers, body: '{}' }).then(response => response.json());
+  assert.equal(status.result.config.enabled, false); assert.equal(status.result.quota, null);
+  const savedConfig = await fetch(`${url.origin}/api/configure`, { method: 'POST', headers, body: JSON.stringify({ pauseRemainingPercent: 8, resumeRemainingPercent: 95 }) }).then(response => response.json());
+  assert.equal(savedConfig.result.pauseRemainingPercent, 8); assert.equal(savedConfig.result.observeOnly, false);
+  await assert.rejects(control('configure', { pollIntervalSeconds: 0 }, { home }), error => error.code === 'invalid_configuration');
+  const saved = JSON.parse(await fs.readFile(path.join(home, 'state.json'), 'utf8'));
+  assert.deepEqual(saved.watches, {}); assert.deepEqual(saved.episodes, []);
+  assert.equal(saved.config.pauseRemainingPercent, 8);
+});

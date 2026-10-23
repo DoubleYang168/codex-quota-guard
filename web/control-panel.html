@@ -1,0 +1,8 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Quota Guard · 控制面板</title><!--STYLE--></head>
+<body><main aria-label="Quota Guard 控制面板">
+  <header><div class="logo" aria-hidden="true">Q</div><div><h1>额度管理</h1><p>Quota Guard <span id="plugin-version"></span></p></div><span id="status" class="badge">连接中</span></header>
+  <section class="summary" aria-live="polite"><strong id="headline">正在读取后台状态…</strong><p id="detail">打开此面板不会启动后台或更改监控设置。</p><div class="counts"><span>已选会话 <b id="managed">—</b></span><span id="quota">上次额度 —</span></div></section>
+  <div class="actions"><button id="open" class="primary" disabled>打开管理页</button><button id="toggle" disabled>启用监控</button><button id="exit" class="danger" disabled>退出后台</button></div>
+  <p id="feedback" role="status"></p><label id="fallback" hidden>浏览器未能自动打开，可复制此本机链接：<input id="fallback-url" type="text" readonly aria-label="管理页链接"></label>
+  <footer><span>停用监控不会停止聊天任务；退出后台会保留会话清单。</span><button id="refresh" disabled>刷新状态</button></footer>
+</main><!--SCRIPT--></body></html>

@@ -1,0 +1,13 @@
+.runtime/
+dist/
+node_modules/
+research/
+runtime-home.json
+.env
+.env.*
+!.env.example
+*.log
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
