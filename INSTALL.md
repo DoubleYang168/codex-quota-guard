@@ -115,10 +115,22 @@ CLI 升级可能删除旧版本缓存，不能把唯一数据放在那里。不�
 
 ## 卸载
 
-1. 使用与插件相同的数据目录执行 `stop`，用 `service-status` 确认 `running:false`。
-2. 在桌面端插件管理中移除 Quota Guard。禁用或卸载 MCP 连接不会可靠结束独立后台，因此先做第 1 步。
-3. 不再使用时，可移除仅供此插件使用的 `quota-guard-local` marketplace 注册。
-4. 数据不会自动删除。确认不再需要恢复记录后，再删除保留的数据目录、源码／解压目录和包文件。
+卸载前保留源码／解压目录，先退出后台，再移除插件。仅关闭浏览器、停用监控或禁用插件连接，都不能代替退出后台。
+
+1. 在 Quota Guard 控制面板点击 **退出后台**，或在源码／运行包根目录执行以下命令。示例使用源码默认数据目录；自定义目录和旧版安装须替换为实际使用的原数据目录，不要为了卸载创建新目录。
+
+   ```powershell
+   $env:CODEX_QUOTA_GUARD_HOME = Join-Path (Get-Location).Path '.runtime\user'
+   node bin/quota-guard.mjs service-status
+   node bin/quota-guard.mjs stop
+   node bin/quota-guard.mjs service-status
+   ```
+
+   核对输出中的 `dataDirectory`，最后确认 `running:false`。`service-status` 不会启动后台；若仍为 `true`，先排查数据目录或退出失败问题，不要直接删除运行文件。
+
+2. 在 Codex 桌面端插件管理中移除 Quota Guard。禁用或卸载 MCP 连接不会可靠结束独立后台，因此先完成第 1 步。移除后如仍显示工具，重新加载插件或重启 Codex。
+3. 不再使用时，可移除仅供此插件使用的 `quota-guard-local` marketplace 注册。使用安装时的桌面 CLI 执行 `plugin marketplace remove quota-guard-local --json`；不要移除其他插件使用的来源。
+4. 数据不会自动删除。源码安装默认保留 `<项目目录>\.runtime\user`；自定义安装以原数据目录为准。重装并保留设置时继续保留该目录；确认不再需要配置、恢复记录和日志后，才手动删除数据目录、源码／解压目录及包文件。删除前再次核对实际路径。
 
 退出和卸载不代表恢复已中断的聊天；需要时先在原聊天手动继续。
 

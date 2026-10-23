@@ -40,6 +40,14 @@ Pause/resume means interrupting a model turn and submitting a new continuation, 
 
 ![Dashboard with simulated data](docs/assets/dashboard-demo.png)
 
+## Uninstall
+
+1. Choose **退出后台** (exit helper) in the Quota Guard control panel, or run `stop` using the original data directory. Verify `running:false` with `service-status`; see [uninstall instructions](INSTALL.md#卸载).
+2. Remove Quota Guard in Codex desktop plugin management. Closing the dashboard or disabling the plugin connection does not reliably stop the independent helper.
+3. Data is retained. Keep the original data directory for reinstallation; delete it and the source/package files only when settings, recovery records and logs are no longer needed.
+
+Uninstalling does not continue paused chats. Continue them manually in the original chat if needed.
+
 ## Develop and report issues
 
 ```powershell
