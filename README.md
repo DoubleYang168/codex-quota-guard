@@ -10,9 +10,11 @@ Codex Quota Guard 希望帮你省下这份惦记：选择需要监控的会话�
 
 作者：dingyang · MIT · 实验版 **0.4.5** · [English](README.en.md)
 
+> **MacBook M 系列芯片用户请前往 [Mac 版本（feat/macos-support 分支）](https://github.com/DoubleYang168/codex-quota-guard/tree/feat/macos-support)**，安装步骤见 [Mac 安装说明](https://github.com/DoubleYang168/codex-quota-guard/blob/feat/macos-support/INSTALL.md)。本 `main` 分支为 Windows 版本。
+
 在浏览器管理页选择会话，配置剩余额度阈值，由本地后台定时判断是否中断当前轮次、是否提交续跑。无需让模型持续轮询额度。
 
-> 仅适配 Windows Codex 桌面本地会话，使用未公开的桌面接口。普通 ChatGPT 网页聊天、云任务和其他系统不在支持范围内。不是 OpenAI 官方项目。完整 Goal 自动恢复链路尚未完成专项真实验收，先用测试会话验证。
+> 本分支仅适配 Windows Codex 桌面本地会话，使用未公开的桌面接口。普通 ChatGPT 网页聊天、云任务和其他系统不在支持范围内。不是 OpenAI 官方项目。完整 Goal 自动恢复链路尚未完成专项真实验收，先用测试会话验证。
 
 ![模拟数据管理页](docs/assets/dashboard-demo.png)
 

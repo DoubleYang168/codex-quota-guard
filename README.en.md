@@ -2,9 +2,11 @@
 
 [中文说明](README.md) · Experimental 0.4.5 · MIT · by dingyang (DoubleYang168)
 
+> **Apple Silicon (M-series) MacBook users: open the [Mac version on `feat/macos-support`](https://github.com/DoubleYang168/codex-quota-guard/tree/feat/macos-support)** and its [installation guide](https://github.com/DoubleYang168/codex-quota-guard/blob/feat/macos-support/INSTALL.md). This `main` branch is the Windows version.
+
 A local quota monitor for explicitly selected Windows Codex desktop chats. A browser dashboard lets you configure thresholds, select chats, and manually stop or continue a turn. A shared Node.js helper polls quota without continuous model inference.
 
-This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. Ordinary ChatGPT web chats, cloud tasks, macOS and Linux desktop control are outside the supported scope. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
+This is an independent project using undocumented desktop IPC and app-tools interfaces. It is not an official OpenAI product. Ordinary ChatGPT web chats, cloud tasks, macOS and Linux desktop control are outside this branch's supported scope. Full automatic Goal recovery has not passed a dedicated real-desktop end-to-end acceptance test.
 
 ## Install
 
