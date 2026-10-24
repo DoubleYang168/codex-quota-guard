@@ -162,3 +162,39 @@ test('state writes remain ordered and invalid configuration is rejected', async 
   assert.equal((await new Store(x.store.home).open()).data.lastTick, 2);
   assert.throws(() => validateConfig({ pollIntervalSeconds: 0 })); assert.throws(() => validateConfig({ pauseRemainingPercent: 100 })); assert.throws(() => validateConfig({ unknown: true }));
 });
+
+test('a long scheduling gap rejects cached quota before control and resumes checks only with a fresh sample', async t => {
+  const x = await setup(t);
+  const freshQuota = x.backend.quota;
+  const cached = await freshQuota();
+  x.advance(60 * 60 * 1000);
+  x.backend.quota = async () => cached;
+  const stale = await x.engine.tick();
+  assert.equal(stale.error.code, 'stale_quota');
+  assert.deepEqual(x.calls, { stop: 0, start: 0 });
+  x.backend.quota = freshQuota;
+  await x.engine.tick();
+  assert.equal(x.calls.stop, 1);
+  x.limits.remaining = 100;
+  const recoverySample = await freshQuota();
+  x.advance(60 * 60 * 1000);
+  x.backend.quota = async () => recoverySample;
+  assert.equal((await x.engine.tick()).error.code, 'stale_quota');
+  assert.equal(x.calls.start, 0);
+  x.backend.quota = freshQuota;
+  await x.engine.tick();
+  assert.equal(x.calls.start, 1);
+});
+
+test('a Goal cleared before successor verification requires inspection without replaying the real continuation', async t => {
+  const x = await setup(t);
+  await x.engine.tick(); x.limits.remaining = 100;
+  await x.engine.tick();
+  assert.equal(x.calls.start, 1);
+  x.state.goal = null;
+  await x.engine.tick();
+  assert.equal(x.episode().status, 'needs_attention');
+  assert.match(x.episode().reason, /Goal changed/);
+  await x.engine.tick();
+  assert.equal(x.calls.start, 1);
+});

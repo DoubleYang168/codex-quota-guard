@@ -9,7 +9,8 @@
 - Unwrap desktop continuation responses and fail promptly when the live bridge disconnects.
 - Add macOS platform/regression tests and a Windows/macOS CI matrix.
 - Dedicated Mac chat acceptance verified exact-turn interruption, one continuation completing with the expected marker, idempotent replay, and helper shutdown.
-- Real quota-reset and Goal recovery remain unverified; see docs/MACOS.md for the acceptance record.
+- Verify condition-triggered pause, original Goal reactivation and automatic successor execution using real desktop actions with a controlled recovery quota dependency. Verify daemon crash recovery, post-dispatch restart deduplication, superseding user input and disconnected-endpoint safety.
+- Report validation method separately from natural quota-reset coverage; preserve conservative attention state when a completed Goal disappears before successor evidence. See docs/MACOS.md.
 
 ## Unreleased
 

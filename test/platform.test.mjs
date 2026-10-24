@@ -5,7 +5,7 @@ import path from 'node:path';
 import os from 'node:os';
 import net from 'node:net';
 import { macApplication, macCli, macDesktopEndpoint, macToolsEndpoint, ownedSocket } from '../src/platform/macos.mjs';
-import { platformDefaults } from '../src/platform/index.mjs';
+import { platformDefaults, platformAcceptance } from '../src/platform/index.mjs';
 import { compatibleVersions } from '../src/backend.mjs';
 import { controlEndpoint } from '../src/paths.mjs';
 import { AppTools } from '../src/app-tools.mjs';
@@ -23,6 +23,20 @@ test('Mac pins are separate from Windows; unknown platform, desktop version and 
   assert.equal(check(config.compatibleCli, config.compatibleDesktop, 'linux'), false);
   assert.equal(check(config.compatibleCli, config.compatibleDesktop, 'darwin', 'x64'), false);
   assert.equal(compatibleVersions(config.compatibleCli, config.compatibleDesktop, platformDefaults('win32'), 'win32'), false);
+});
+
+test('controlled recovery acceptance applies only to the tested platform, architecture and desktop pair', () => {
+  const config = platformDefaults('darwin');
+  const accepted = platformAcceptance(config.compatibleCli, config.compatibleDesktop, 'darwin', 'arm64');
+  assert.equal(accepted.goalRecoveryValidated, true);
+  assert.equal(accepted.recoveryConditionValidation, 'controlled_quota_condition');
+  assert.equal(accepted.naturalQuotaResetValidated, false);
+  for (const [cli, desktop, platform, arch] of [
+    [config.compatibleCli, 'future', 'darwin', 'arm64'],
+    ['future', config.compatibleDesktop, 'darwin', 'arm64'],
+    [config.compatibleCli, config.compatibleDesktop, 'darwin', 'x64'],
+    [config.compatibleCli, config.compatibleDesktop, 'win32', 'arm64']
+  ]) assert.equal(platformAcceptance(cli, desktop, platform, arch).goalRecoveryValidated, false);
 });
 
 test('Mac paths preserve spaces and explicit app selection; CLI absence is actionable', async t => {

@@ -2,7 +2,7 @@ import { AppServer, desktopVersion } from './app-server.mjs';
 import { DesktopIpc } from './desktop-ipc.mjs';
 import { AppTools } from './app-tools.mjs';
 import { hash, GuardError, goalIdentity, threadIdentity, sleep } from './util.mjs';
-import { reviewedPlatforms } from './platform/index.mjs';
+import { reviewedPlatforms, platformAcceptance } from './platform/index.mjs';
 export function compatibleVersions(cli, desktop, config, platform = process.platform, arch = process.arch) {
   const reviewedPairs = new Map(reviewedPlatforms[platform] || []);
   // Existing installations retain their original baseline. Only these reviewed
@@ -24,7 +24,7 @@ export class Backend {
   async compatibility() {
     const [cli, desktop] = await Promise.all([this.rpc.version(), desktopVersion()]);
     return { platform: process.platform, arch: process.arch, cli, desktop, compatible: compatibleVersions(cli, desktop, this.config), desktopVersionVerified: !!desktop,
-      goalRecoveryValidated: false, warning: !desktop ? 'Desktop package version could not be read; macOS control requires a verified version.' : process.platform === 'darwin' ? 'Experimental macOS support; ordinary-chat stop/resume completion verified for the documented arm64 version. Full quota-reset and Goal recovery acceptance are pending. New installations use observe mode.' : null };
+      ...platformAcceptance(cli, desktop), warning: !desktop ? 'Desktop package version could not be read; macOS control requires a verified version.' : process.platform === 'darwin' ? 'Experimental macOS support; conditional stop/resume and Goal successor execution verified on the documented arm64 version using a controlled recovery condition. Natural quota reset was not tested. New installations use observe mode.' : null };
   }
   async quota() {
     const [limits, account] = await Promise.all([this.rpc.request('account/rateLimits/read', {}), this.rpc.request('account/read', {})]);

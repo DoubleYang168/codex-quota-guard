@@ -79,7 +79,7 @@ GitHub 自带 Source code ZIP／tar.gz 基于公开标签，也可用于源码�
 
 ## CI
 
-`.github/workflows/ci.yml` 在 Windows、Node 22／24 上执行 check、单元测试、构建、ZIP 和源码归档校验。Python 仅参与维护校验。不安装真实 Codex，不登录真实账户，不做真实会话控制。上传的 CI artifacts 只有清洁发行包和 SHA-256 文件。
+`.github/workflows/ci.yml` 在 Windows／macOS、Node 22／24 上执行 check、单元测试、构建、ZIP 和源码归档校验。Python 仅参与维护校验。不安装真实 Codex，不登录真实账户，不做真实会话控制。上传的 CI artifacts 只有清洁发行包和 SHA-256 文件。
 
 ## 发布后维护
 
