@@ -1,6 +1,6 @@
 # 使用手册
 
-Mac 首次使用默认观察模式，Windows 默认自动控制；名单均为空。Mac 安装、路径和验收边界见 [Mac 专用说明](MACOS.md)。
+本 Mac 分支面向 M 系列芯片，首次使用默认观察模式、空名单。安装见 [Mac 安装说明](../INSTALL.md)，验收边界见 [Mac 专用说明](MACOS.md)。Windows 用户请前往 [Windows 版本（main 分支）](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。
 
 ## 先认识三个开关
 
@@ -56,7 +56,7 @@ Mac 首次使用默认观察模式，Windows 默认自动控制；名单均为�
 
 在源码安装目录操作已安装实例，先与安装时的数据目录保持一致：
 
-```powershell
+```sh
 $env:CODEX_QUOTA_GUARD_HOME = Join-Path (Get-Location).Path '.runtime\user'
 node bin/quota-guard.mjs service-status
 node bin/quota-guard.mjs ui
@@ -87,7 +87,7 @@ CLI／MCP 的直接配置即时生效，只有浏览器表单需要显式点击�
 
 ## 不连接真实聊天的演示
 
-```powershell
+```sh
 npm run demo
 ```
 

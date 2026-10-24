@@ -2,13 +2,15 @@
 
 欢迎提交文档、测试和兼容性修复。请先阅读 [架构](docs/ARCHITECTURE.md)、[兼容性](docs/COMPATIBILITY.md) 和 [隐私](docs/PRIVACY.md)。沟通请围绕可复现事实，尊重其他贡献者，不公开个人信息。
 
+当前分支面向 Apple Silicon（M 系列）MacBook；Windows 修改和文档请参考 [main 分支](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。
+
 第一次使用 Git 维护本项目时，参照 [Git 工作流](docs/GIT_WORKFLOW.md)。
 
 ## 开发环境
 
-Node.js 22+，Windows 为桌面控制目标；无需 `npm install`。Python 3 仅用于 ZIP 校验及源码归档。建议在 PowerShell 使用 UTF-8。
+Node.js 22+，本分支以 macOS arm64 为桌面控制目标；无需 `npm install`。Python 3 仅用于 ZIP 校验及源码归档。文档命令使用 macOS 终端语法。
 
-```powershell
+```sh
 npm run check
 npm test
 npm run demo

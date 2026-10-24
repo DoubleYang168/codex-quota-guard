@@ -1,4 +1,18 @@
-# 常见问题
+# MacBook M 系列常见问题
+
+Windows 用户请使用 [Windows 分支的常见问题](https://github.com/DoubleYang168/codex-quota-guard/blob/main/docs/TROUBLESHOOTING.md)。
+
+## M 系列机器仍显示架构不兼容
+
+在实际启动插件的 Node 环境中检查 `node -p 'process.arch'`，应为 `arm64`。Rosetta 终端或 x64 Node 会被拒绝；改用原生终端与 arm64 Node，不要修改兼容白名单。
+
+## 找不到应用、CLI 或有多个候选
+
+`mac_application_not_found` 表示没有找到支持布局的桌面应用；`mac_application_ambiguous` 表示有多个候选。使用 `CODEX_QUOTA_GUARD_APP` 选择实际运行的 `.app`，或用 `CODEX_QUOTA_GUARD_CODEX` 指定对应桌面 CLI。环境变量只对其所在进程环境生效，安装与宿主运行时需保持一致。示例见 [安装说明](../INSTALL.md#应用不在默认位置)。
+
+## IPC 无法连接或提示 unsafe_desktop_socket
+
+确认桌面运行、目标聊天已打开，且 CODEX_HOME 指向该桌面的实际用户目录。默认桌面端点为 `~/.codex/ipc/ipc.sock`；自定义端点用 CODEX_QUOTA_GUARD_IPC_PATH。端点必须是当前用户拥有的 socket，不是符号链接，且不允许其他用户写入。不要删除宿主 socket 或放宽权限来跳过校验。
 
 ## 工具或原生按钮没有出现
 
@@ -22,11 +36,11 @@ CLI 安装命令在不同版本可能变化。先按 [兼容性](COMPATIBILITY.m
 
 只有插件因额度暂停的记录会自动恢复，手动停止不在此列。检查周额度、账户是否变化、原 Goal／任务是否被替换、是否已有新轮次或排队消息，以及桌面是否加载目标会话。
 
-严格 100% 时，一个会话恢复后的消耗可能让其他会话继续等待。完整 Goal 自动恢复仍是待验收能力。
+严格 100% 时，一个会话恢复后的消耗可能让其他会话继续等待。原 Goal 后续轮次已在受控恢复条件下验收；没有等待自然额度重置，详见 [验收说明](MACOS.md)。
 
 ## 结果不明、needs_attention
 
-检查原聊天里是否已经停止或发出了续跑，不要反复提交。确认后可取消旧恢复或按页面说明解除阻止，再决定是否手动继续。解除阻止不证明前次操作成功，不重发指令。
+检查原聊天里是否已经停止或发出了续跑，不要反复提交。确认后可取消旧恢复或按页面说明解除阻止，再决定是否手动继续。解除阻止不证明前次操作成功，不重发指令。Goal 很快完成并被宿主清除时，缺少原 Goal 后续轮次证据也会保守进入此状态；检查原聊天的实际结果即可，不要盲目重新启动。
 
 ## 管理页离线或旧链接失效
 
@@ -34,7 +48,7 @@ CLI 安装命令在不同版本可能变化。先按 [兼容性](COMPATIBILITY.m
 
 ## 两个入口显示不同名单／配置
 
-核对数据目录。Windows 源码 CLI 默认 `.runtime`，源码安装脚本默认固定为 `.runtime/user`；Mac 新安装默认 `~/Library/Application Support/Codex Quota Guard/`，旧源码数据位置会保留；环境变量和安装指针还可能覆盖默认值。不同目录会启动不同后台。先停止错误实例，再使用原目录，不要让两个实例管理同一聊天。
+核对数据目录。Mac 新安装默认 `~/Library/Application Support/Codex Quota Guard/`，旧源码数据位置会保留；环境变量和安装指针还可能覆盖默认值。不同目录会启动不同后台。先停止错误实例，再使用原目录，不要让两个实例管理同一聊天。
 
 ## 想停插件，却只关了网页
 

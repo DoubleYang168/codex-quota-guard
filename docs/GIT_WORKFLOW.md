@@ -1,77 +1,66 @@
-# 使用 Git 维护项目
+# Mac 分支的 Git 工作流
 
-仓库：<https://github.com/DoubleYang168/codex-quota-guard>。本目录是正式 Git 工作区；日常修改、提交和推送都在这里完成。早期未接入 Git 的开发副本不会自动同步，后续以本工作区为准。
+仓库：[DoubleYang168/codex-quota-guard](https://github.com/DoubleYang168/codex-quota-guard)。Mac 开发分支为 `feat/macos-support`；[Windows 版本位于 main](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。文档、安装包和发布标签需要对应同一平台分支。
 
-## 首次在其他电脑使用
+## 获取 Mac 源码
 
-```powershell
-git clone https://github.com/DoubleYang168/codex-quota-guard.git
-Set-Location codex-quota-guard
+如果已经有本地 Mac 工作区，先用 `git status` 和 `git branch --show-current` 确认位置，不需要重新克隆。
+
+下面的克隆命令只在维护者已将 Mac 分支推送到 GitHub 后可用；如果找不到远程分支，不要用 `main` 替代：
+
+```sh
+git clone --branch feat/macos-support --single-branch https://github.com/DoubleYang168/codex-quota-guard.git
+cd codex-quota-guard
 git status
+git branch --show-current
 ```
 
-公开仓库的克隆／拉取通常不需登录；推送需要 GitHub 身份认证。Chrome 已登录不等于 Git 命令行已登录。Windows 推荐使用 Git for Windows 自带的 Git Credential Manager，按首次推送的登录流程完成授权，不要把令牌写进远程 URL、源码或文档。
+公开仓库的读取通常不需要登录，推送需要 GitHub 身份认证。浏览器登录和 Git 命令行认证是两件事。使用自己的 Git 作者身份，不要将令牌写进远程 URL 或文档。
 
-作者身份与登录凭证是两件事。对本仓库使用已核实的公开隐私邮箱：
+## 开始修改
 
-```powershell
-git config --local user.name dingyang
-git config --local user.email 50577327+DoubleYang168@users.noreply.github.com
-```
+先确认工作区的未提交变化属于谁，再切换分支。已有 Mac 远程分支且可以快进时：
 
-这些命令只影响本仓库，不修改其他项目的全局身份。不要配置你不拥有的账号邮箱。
-
-## 每次开始修改
-
-```powershell
+```sh
 git status
-git switch main
-git pull --ff-only
-git switch -c docs/improve-install-guide
+git switch feat/macos-support
+git pull --ff-only origin feat/macos-support
+git switch -c docs/improve-macos-guide
 ```
 
-分支名按实际工作修改。`pull --ff-only` 遇到分叉会停止，先查看差异，再决定合并方式，不要用强制推送覆盖远程历史。切换或拉取前有未提交改动时，先确认这些改动的归属。
+主题分支名称按实际任务调整；只在明确需要新分支时创建。Mac 分支尚未发布、只有本地提交时，跳过远程拉取，继续在本地 Mac 基线工作。
 
-## 检查、提交、推送
+不要默认切到 Windows `main` 再修改 Mac 文档。遇到分叉先检查差异，不通过强制推送覆盖远程历史。
 
-```powershell
+## 检查与提交
+
+```sh
 git diff
 npm run check
-npm test
 git add README.md
 git diff --cached
-git commit -m "Improve installation documentation"
+git diff --cached --check
+git commit -m "docs: improve Mac installation guide"
+```
+
+以 README 为例暂存，实际提交只加入属于本次工作的文件。文档变更执行源码／链接检查；影响运行逻辑的变更按 [贡献指南](../CONTRIBUTING.md) 运行相关测试。
+
+明确准备发布主题分支时再推送：
+
+```sh
 git push -u origin HEAD
 ```
 
-`git add README.md` 以修改 README 为例；修改其他文件时使用对应的真实路径。变更所需的测试见 [贡献指南](../CONTRIBUTING.md)。确认暂存内容只包含本次工作，再提交；日常不需要重新初始化或重新关联远程。
+Git 提交和推送不会安装插件，也不会上传被忽略的 `dist/`，更不会自动创建 Release。向哪个目标分支提交 PR，需要按此次变更的平台范围选择；不要把 Mac 分支专用文档直接当作 Windows 的安装说明。
 
-推送功能分支后，可在 GitHub 创建 PR，等 CI 通过再合并。个人的小改动也可以直接在干净且已更新的 main 上提交并 `git push`，无需每次网页上传。
+## 不应提交的内容
 
-## 合并后继续下一次工作
+`.runtime/`、`dist/`、`runtime-home.json`、本机环境变量、凭证和原始日志不进入源码。提交前检查 `git status` 与 `git diff --cached`；忽略规则不会删除已提交过的秘密。
 
-```powershell
-git switch main
-git pull --ff-only
-git status
-```
+仓库使用 `.gitattributes` 统一文本换行，不要关闭换行规范来隐藏差异。
 
-`main` 跟踪 `origin/main`，因此在 main 上通常只需 `git pull --ff-only` 和 `git push`。运行 `git remote -v` 可核对远程地址。
+## 本机安装与版本发布
 
-## 什么不应提交
+运行 `npm run package` 只生成本地产物。安装到当前用户环境需要显式执行 `npm run install:local`；发布到 GitHub 需要单独推送、打标签和上传发行包，见 [Mac 发布指南](RELEASING.md)。
 
-`.runtime/`、`dist/`、`runtime-home.json`、本机凭证和日志已被忽略。每次提交前检查 `git status`、`git diff --cached`，忽略规则不会移除历史中已经提交的秘密。
-
-仓库通过 `.gitattributes` 统一文本换行。早期网页上传保留了部分 CRLF；接入正式 Git 工作流时将这些文本规范为 LF。不要为了隐藏差异而关闭仓库的文本规范化规则。
-
-## 发布与本机插件升级
-
-普通 Git 提交不等于发布新版本，也不会替换已经运行的本机插件。发布前根据 [发布指南](RELEASING.md) 更新版本、验证、打标签和上传发行包；未发布的工作可先放在 CHANGELOG 的 Unreleased 区域。
-
-```powershell
-npm run version:set -- 0.4.6
-```
-
-版本号仅示例；选择实际下一版本并更新说明，再构建。`git push` 上传源码，不上传被忽略的 `dist/`。Release 安装包需要单独发布。
-
-若从旧开发目录切换到本仓库安装，先退出旧后台，备份并保留原数据目录，安装时沿用相同 `CODEX_QUOTA_GUARD_HOME`；不要直接创建第二个后台接管同一批会话。详见 [安装与升级](../INSTALL.md)。
+如果从旧开发目录切换到当前工作区安装，先退出旧后台，备份并沿用原 `CODEX_QUOTA_GUARD_HOME`，避免两个后台控制同一聊天。步骤见 [安装与升级](../INSTALL.md)。

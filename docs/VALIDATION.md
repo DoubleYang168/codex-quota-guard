@@ -1,6 +1,6 @@
 # 验证范围与验收记录
 
-0.4.5 为基于 0.4.4 的开源整理版。本文区分历史反馈、自动测试与待完成的真实验收，不公开原始运行记录。
+当前 Mac 分支版本为 0.4.6。本文区分 Mac 本机验收、Windows 历史反馈、自动化测试和未覆盖范围，不公开原始运行记录。Windows 用户请参考 [main 分支](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。
 
 ## 已有证据
 
@@ -51,12 +51,12 @@ Windows、Node.js 22.19.0、Python 3.13.11 环境：
 
 ## 可重复的非真实聊天验证
 
-```powershell
+```sh
 npm run check
 npm test
 npm run package
-npm run verify:release
-npm run package:source
+python3 scripts/verify-release.py
+python3 scripts/package-source.py
 ```
 
 后两项需要 Python 3。测试／check／打包不要求真实账户。`npm run demo` 可验证表单保存、手动按钮与名单，后端全为模拟，不查询真实额度。

@@ -1,4 +1,6 @@
-# 架构与数据流
+# Mac 分支架构与数据流
+
+本分支面向 Apple Silicon（M 系列）；Windows 用户文档见 [main 分支](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。平台适配代码保留了 Windows 实现，便于共用业务逻辑，但本分支的用户安装说明以 Mac 为准。
 
 项目使用 JavaScript ES Modules 和 Node.js 22+ 标准库，前端为 HTML／CSS／原生 JavaScript，无 npm 运行依赖。
 

@@ -2,6 +2,8 @@
 
 ## 0.4.6 — 2026-10-24
 
+- Reorganize this branch documentation for Apple Silicon MacBooks, use macOS shell examples, and link Windows users to the main branch.
+
 - Add experimental macOS Apple Silicon support for the reviewed desktop version.
 - Discover the desktop bundled CLI and use Unix IPC owner snapshots for live state, including detached helpers.
 - Default new Mac installations to observe mode and a stable Library data directory; preserve existing state.
