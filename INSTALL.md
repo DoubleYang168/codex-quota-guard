@@ -8,7 +8,7 @@
 
 - Apple Silicon（M 系列）MacBook，使用当前登录的本地用户运行。
 - 已安装并登录支持本地插件的 Codex 桌面宿主，保持桌面运行。
-- 已验证组合：桌面 `26.1016.62342`（build `21477`）、桌面附带 CLI `0.163.0-alpha.11.2`。
+- 兼容版本组合：桌面 `26.1016.62342`（build `21477`）、桌面附带 CLI `0.163.0-alpha.11.2`。
 - Node.js 22+，`node` 和 `npm` 均在 PATH 中，Node 进程为 `arm64`。无需 `npm install`。
 
 ```sh
@@ -20,7 +20,7 @@ npm --version
 
 架构应为 `arm64`。M 系列硬件搭配 Rosetta／x64 Node 不符合控制兼容检查；Intel Mac、其他版本的兼容性见 [兼容性说明](docs/COMPATIBILITY.md)，不要修改版本字段绕过检查。
 
-本分支使用未公开桌面接口，安装成功不等于所有桌面功能均已验收。已有真实控制和隔离安装的证据及剩余边界见 [Mac 验收说明](docs/MACOS.md)。
+本分支使用未公开桌面接口，具体运行条件见 [兼容性说明](docs/COMPATIBILITY.md)，Mac 路径和夜间使用方式见 [Mac 使用说明](docs/MACOS.md)。
 
 ## 获取正确的源码
 
@@ -33,28 +33,27 @@ npm --version
 进入源码根目录，依次执行：
 
 ```sh
-npm run check
+node --version
 npm run doctor
 npm run package
 npm run install:local
 ```
 
-开发者可在安装前额外运行 `npm test`。无需先安装 npm 依赖。
+无需先安装 npm 依赖。
 
 | 命令 | 作用 |
 | --- | --- |
-| `check` | 检查公开源码清单、版本和本地文档链接 |
 | `doctor` | 只读查询真实账户额度与版本，诊断留在本机，不控制聊天 |
 | `package` | 写入 `dist/latest.json`、暂存插件目录、ZIP 和校验值 |
 | `install:local` | 注册到当前用户的 Codex 插件环境，保存数据目录指针 |
 
 如果 doctor 报告不兼容或连接失败，先解决问题再安装。安装脚本输出 `installedPath` 和 `dataDirectory`；保留这两个路径。
 
-安装后重新加载插件，需要时重启桌面端，并在新聊天输入 **“使用 quota-guard 打开额度管理页。”**。Mac 新数据目录默认观察模式、空名单。先在专用测试聊天验证，再决定是否开启自动控制。
+安装后重新加载插件，需要时重启桌面端，并在新聊天输入 **“使用 quota-guard 打开额度管理页。”**。Mac 新数据目录默认观察模式、空名单。需要自动暂停和续跑时，选择自动控制并保存设置，再加入目标会话。
 
 ### 应用不在默认位置
 
-自动发现会检查 `/Applications` 与用户 `~/Applications` 中的 `ChatGPT.app`／`Codex.app`。本机验证的宿主包名为 `ChatGPT.app`；这里管理的是其 Codex 本地会话，不是普通 ChatGPT 网页对话。
+自动发现会检查 `/Applications` 与用户 `~/Applications` 中的 `ChatGPT.app`／`Codex.app`。桌面宿主包名可以是 `ChatGPT.app`；这里管理的是其 Codex 本地会话，不是普通 ChatGPT 网页对话。
 
 存在多个候选或安装在其他位置时，先选择实际正在运行的应用：
 
@@ -74,7 +73,7 @@ export CODEX_QUOTA_GUARD_CODEX='/Applications/ChatGPT.app/Contents/Resources/cod
 
 ## 从运行 ZIP 安装
 
-运行包不含 `scripts/`、`test/`，不能运行 `npm run install:local`、`npm run check`、`npm run demo` 或 `npm test`。需要这些命令请使用源码包。
+运行包不含源码维护脚本，不能运行 `npm run install:local`、`npm run check` 或 `npm run demo`。需要这些命令请使用源码包。
 
 1. 核对 Mac 发行包及可信发布页上的 SHA-256，再解压到稳定目录，保留其中的 `quota-guard` 文件夹。包内 `SHA256SUMS.json` 只用于文件一致性，不能单独证明来源。
 2. 进入解压出的 `quota-guard` 目录，指定实际桌面 CLI 并注册：
@@ -185,7 +184,7 @@ node bin/quota-guard.mjs service-status
 
 - 无工具、Rosetta、多个应用候选、状态不一致等问题见 [常见问题](docs/TROUBLESHOOTING.md)。
 - CLI、模式和恢复状态见 [使用手册](docs/USAGE.md)。
-- 实际测试方法、隔离安装与未覆盖范围见 [Mac 适配与验收](docs/MACOS.md)。
+- 应用路径、M 系列运行环境和夜间使用见 [Mac 使用说明](docs/MACOS.md)。
 - Windows 步骤请跳转 [Windows 安装说明](https://github.com/DoubleYang168/codex-quota-guard/blob/main/INSTALL.md)。
 
 报告问题前脱敏，不附原始账户信息、聊天历史、带凭证 URL 或控制令牌。

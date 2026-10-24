@@ -1,6 +1,6 @@
 # 使用手册
 
-本 Mac 分支面向 M 系列芯片，首次使用默认观察模式、空名单。安装见 [Mac 安装说明](../INSTALL.md)，验收边界见 [Mac 专用说明](MACOS.md)。Windows 用户请前往 [Windows 版本（main 分支）](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。
+本 Mac 分支面向 M 系列芯片，首次使用默认观察模式、空名单。安装见 [Mac 安装说明](../INSTALL.md)，Mac 运行要求见 [Mac 使用说明](MACOS.md)。Windows 用户请前往 [Windows 版本（main 分支）](https://github.com/DoubleYang168/codex-quota-guard/tree/main)。
 
 ## 先认识三个开关
 
@@ -50,7 +50,7 @@
 | `needs_attention` | 无法证明控制结果，停止自动重发；检查原聊天后决定下一步 |
 | `cancelled` | 旧恢复被取消或新任务取代 |
 
-其他完成状态以页面说明为准。看见续跑轮次不代表完整 Goal 后续自动执行已验收。解除结果不明的阻止只表示你已人工检查，不代表前次操作成功，也不会重发控制。取消恢复不会主动继续聊天。
+其他完成状态以页面说明为准。Goal 后续执行状态应同时在原聊天中确认。解除结果不明的阻止只表示你已人工检查，不代表前次操作成功，也不会重发控制。取消恢复不会主动继续聊天。
 
 ## 命令行
 

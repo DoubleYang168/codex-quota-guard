@@ -1,95 +1,132 @@
-# Codex Quota Guard · MacBook Apple Silicon
+# Codex Quota Guard
 
-A local quota monitor for explicitly selected Codex desktop chats on **Apple Silicon (M-series) MacBooks**.
+**Quota monitoring, pause and continuation for selected local Codex desktop chats on Apple Silicon (M-series) MacBooks.**
 
-Experimental **0.4.6** · MIT · by dingyang (DoubleYang168) · [中文说明](README.md)
+By dingyang · MIT · Experimental **0.4.6** · [中文说明](README.md)
 
-> **Windows users: open the [Windows version on `main`](https://github.com/DoubleYang168/codex-quota-guard/tree/main), or its [installation guide](https://github.com/DoubleYang168/codex-quota-guard/blob/main/INSTALL.md).** This branch, `feat/macos-support`, documents the Mac version.
+Dear Codex Plus user, have you ever had your 5-hour quota run out before a task finished, then had to return and click “Continue” after it recovered? It is especially frustrating to leave a long task running before bed and discover the next morning that it stopped halfway through the night.
 
-Select chats and thresholds in a browser dashboard. A local helper polls account quota, interrupts selected turns when necessary and submits one continuation when recovery conditions are met. Continuous model polling is not required.
+Codex Quota Guard helps you spend less time watching over those tasks. Select the chats to monitor: when remaining quota reaches your low-quota threshold, the local helper interrupts the current turn and records the task for recovery. Once the 5-hour quota reaches your recovery threshold and other recovery conditions are met, it attempts to continue. By default, it pauses at ≤5% remaining and attempts to continue at 100%.
 
-This independent experimental project uses undocumented desktop interfaces. It is not an official OpenAI plugin. Ordinary ChatGPT web chats, cloud tasks, Intel Macs and Linux desktop control are outside this branch's support scope.
+**This plugin pairs especially well with Codex at night.** Set up your task before bed, save your rules and add the chat to automatic monitoring. Keep your computer awake, Codex desktop running and the plugin helper running.
+
+> Windows users: open the [Windows version on `main`](https://github.com/DoubleYang168/codex-quota-guard/tree/main) or its [installation guide](https://github.com/DoubleYang168/codex-quota-guard/blob/main/INSTALL.md).
+
+> This branch supports local Codex desktop chats on Apple Silicon MacBooks through undocumented desktop interfaces. Ordinary ChatGPT web chats, cloud tasks and Intel Macs are outside its scope. This is not an official OpenAI project.
 
 ![Dashboard with simulated data](docs/assets/dashboard-demo.png)
 
-## Requirements
+The screenshot uses simulated data without connecting to real chats. Native MCP Apps panel availability depends on the host.
 
-| Component | Requirement / tested combination |
-| --- | --- |
-| Hardware and runtime | M-series MacBook, native `arm64` Node process |
-| Desktop | Signed in, running, local plugin support; tested version `26.1016.62342`, build `21477` |
-| Bundled CLI | `codex-cli 0.163.0-alpha.11.2` |
-| Node.js | 22+ with `node` and `npm` on PATH; no `npm install` needed |
+## Features
+
+- Read account 5-hour and weekly quota at configurable intervals.
+- Manage only explicitly selected chats; the initial watch list is empty.
+- Record the chat and turn before interrupting at the pause threshold.
+- Submit a continuation in the original chat when recovery conditions are met; attempt to reactivate the original Goal when present.
+- Manually start/continue, stop, and add/remove chats from automatic monitoring.
+- Save settings, rules, recovery records and events; block automatic replay when the outcome is unclear.
+- Use a browser dashboard, MCP tools, native control panel or CLI.
+
+“Pause” interrupts a model turn; “resume” sends a new continuation message. Completed file changes, commands and external actions are not rolled back.
+
+## Requirements and installation
+
+- An Apple Silicon MacBook with a signed-in desktop host supporting local plugins.
+- Native `arm64` Node.js **22+**, with `node` and `npm` on PATH. No runtime npm dependencies or `npm install` required.
+- A CLI/desktop combination listed in [compatibility](docs/COMPATIBILITY.md). Arbitrary newer versions may not work.
+
+Download and extract the source ZIP for the Mac branch, `feat/macos-support`. Enter the directory containing `package.json` and run in macOS Terminal:
 
 ```sh
-uname -m
-node -p 'process.arch'
 node --version
-npm --version
-```
-
-Use an arm64 terminal and Node runtime. An x64 Node running through Rosetta does not pass the Mac control compatibility check. A tested arm64 host does not establish compatibility with every M-series model or future desktop release. See [compatibility](docs/COMPATIBILITY.md).
-
-## Install
-
-Use the **Mac branch source**, then enter the directory containing `package.json`. The default `main` branch is the Windows version. If `feat/macos-support` is not visible on GitHub, the Mac branch has not been pushed there yet; do not download the default branch as the Mac version.
-
-```sh
-npm run check
 npm run doctor
 npm run package
 npm run install:local
 ```
 
-Doctor queries real quota and writes local diagnostics without stopping or continuing chats. **Only the final installation command changes the current user's plugin registration.** Reload the plugin or restart the desktop host, then use a new chat.
+Doctor queries real quota read-only and saves diagnostics locally. Installation changes the current user's plugin registration. Reload the plugin or restart the desktop host, then use a new chat.
 
-Mac data defaults to `~/Library/Application Support/Codex Quota Guard/`. Preserve existing data directories during upgrades. Source installation, runtime ZIP installation, custom paths and uninstall instructions are in [INSTALL.md](INSTALL.md).
+New Mac installations store runtime data in `~/Library/Application Support/Codex Quota Guard/`. Preserve the original data directory when upgrading. **Runtime ZIP and source ZIP installation steps differ**; see [installation, upgrades and uninstall](INSTALL.md).
 
-## Use
+## First use
 
-Ask Codex: **“使用 quota-guard 打开额度管理页”** (open the Quota Guard dashboard).
+1. In a chat with the plugin loaded, ask: **“使用 quota-guard 打开额度管理页。”** (Open the Quota Guard dashboard.)
+2. Choose monitoring status and control mode, then click **保存设置** (Save settings). Mac defaults to observe mode; select automatic control for automatic pause and continuation.
+3. Set thresholds and interval, then click **保存规则** (Save rules).
+4. Find the target chat and select **加入自动监控** (Add to automatic monitoring). Watch-list changes take effect immediately.
+5. Review recovery records and events.
 
-1. Start in the default **observe mode**, using a dedicated test chat.
-2. Save thresholds and interval with **保存规则**.
-3. When ready for actual control, select automatic mode and click **保存设置**.
-4. Add only the chats you explicitly want managed.
-5. Check recovery records and events for the result.
+Both save buttons confirm success after the helper accepts the change. Unsaved settings do not take effect. Watch-list changes and manual start/stop actions need no additional save.
 
-Defaults: empty watch list, observe mode, monitoring enabled, pause at remaining ≤5%, resume at ≥100%, poll every 300 seconds. Recovery also checks weekly quota and task identity. The dashboard refreshes cached state every 10 seconds. Upgrades retain saved settings.
+| Defaults for new data directories | Value |
+| --- | --- |
+| Watch list | Empty |
+| Control mode | Observe; switch to automatic control for automatic pause/resume |
+| Monitoring | Enabled |
+| Pause threshold | 5-hour remaining quota ≤5% |
+| Recovery threshold | ≥100%, plus weekly quota and task identity checks |
+| Background interval | 300 seconds; configurable from 15–3600 seconds |
+| Dashboard refresh | Cached state every 10 seconds, separate from quota polling |
 
-Manual **停止** interrupts a turn without scheduling recovery. Manual **启动／继续** sends a continuation and may reactivate the original Goal. **Both manual actions execute in observe mode or with monitoring disabled.** Closing the page leaves the helper running; exiting the helper does not stop the current chat task.
+Upgrades preserve saved settings. Thresholds mean **remaining percentage**; recovery must exceed pause. Opening or refreshing chats reads real quota. “Check now” executes saved rules and can interrupt or resume selected chats when automatic control is enabled.
 
-## Validation and limits
+## Manual controls and helper lifecycle
 
-Real Mac tests verified manual interruption and continuation completion, conditional automatic pause, original Goal reactivation and an automatic successor turn. Recovery quota was injected **only in an isolated test dependency**; account identity, task state and desktop actions remained real. Actual natural quota reset was not tested.
+| Action | Behavior |
+| --- | --- |
+| Start/continue | Continue an idle chat; avoid duplicate starts; attempt to activate its original Goal when eligible |
+| Stop | Interrupt the current turn without scheduling automatic recovery |
+| Add/remove monitoring | Change the watch list; subsequent checks follow saved rules |
+| Observe mode | Record proposed automatic actions |
+| Disable monitoring | Stop automatic management; the helper and current tasks continue |
+| Exit helper | Save monitoring as disabled and exit; current chat tasks continue |
+| Close dashboard | The helper continues running |
 
-Crash/restart deduplication, new user input cancelling old recovery and disconnected-endpoint safety were verified. Installation was tested under isolated `CODEX_HOME` directories, including repeat installation, retained state and discovery of all 10 MCP tools. Node 24 and 25 each passed 78 automated tests.
+**Manual start/stop still executes in observe mode or with monitoring disabled.** Manual control cancels that chat's unfinished recovery record. Chats remaining on the watch list are still subject to subsequent quota checks.
 
-This evidence does **not** establish the complete daily-user installation-and-use flow. Actual system sleep was not tested. Detailed methods are in [Mac acceptance](docs/MACOS.md) and [validation records](docs/VALIDATION.md).
-
-Pause/resume means interrupting a model turn and sending a new message, not restoring a process snapshot. Prior file changes and external effects remain. Continuations consume quota; sampling can overshoot thresholds. Keep the desktop running and the target chat loaded. There is no LaunchAgent or login startup item.
-
-If a completed Goal disappears before its successor is verified, the helper conservatively requests inspection instead of replaying a continuation.
+Ask **“显示 Quota Guard 控制面板”** to open the native control panel. If unavailable, use the [CLI](docs/USAGE.md#命令行). Exit the helper before disabling or removing the host plugin connection.
 
 ## Uninstall
 
-From the corresponding code directory, using the original data directory:
+1. Use **退出后台** (Exit helper), or follow [uninstall instructions](INSTALL.md#卸载) with the original data directory and confirm `running:false` through `service-status`.
+2. Remove Quota Guard in desktop plugin management. Closing the dashboard or disabling a plugin connection does not reliably stop the helper.
+3. Data is retained by default. Preserve it for reinstallation; delete it only when you no longer need settings, recovery records or logs.
 
-```sh
-node bin/quota-guard.mjs stop
-node bin/quota-guard.mjs service-status
-```
+Uninstalling does not automatically continue paused chats. Continue them manually if needed.
 
-Confirm `running:false`, then remove the plugin in desktop plugin management. Data is retained unless you explicitly delete it. Closing the browser or disabling a plugin connection does not reliably stop the helper. See [uninstall](INSTALL.md#卸载).
+## Known limits
 
-## Development and documentation
+- Sampling has a delay and cannot guarantee stopping at exactly 5%.
+- Recovery is sequential. With a strict 100% threshold, quota consumed by the first chat may leave others waiting.
+- Keep the computer awake, the desktop running and target chats loaded. There is no tray app, LaunchAgent or login startup item.
+- Automatic recovery handles only interruptions caused by this plugin. Changes to account, task, Goal, turn or queued input can block or cancel recovery.
+- Continuations consume quota. Exhausted quota, protocol changes or unclear outcomes may require manual action.
+
+## Documentation
+
+| Document | Contents |
+| --- | --- |
+| [Installation](INSTALL.md) | Source/runtime ZIP installation, upgrades, rollback and uninstall |
+| [Mac guide](docs/MACOS.md) | Application paths, native runtime and overnight use |
+| [Usage](docs/USAGE.md) | Controls, recovery states, CLI and examples |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Thresholds, recovery, offline state, versions and data directories |
+| [Architecture](docs/ARCHITECTURE.md) | Processes, communication and data flow |
+| [Compatibility](docs/COMPATIBILITY.md) | Exact version combinations and runtime requirements |
+| [Privacy](docs/PRIVACY.md) / [Security](SECURITY.md) | Local records, access credentials and reporting |
+| [Contributing](CONTRIBUTING.md) / [Changelog](CHANGELOG.md) | Development and changes |
+| [Git workflow](docs/GIT_WORKFLOW.md) | Branches, commits and updates |
+| [Releasing](docs/RELEASING.md) | Packaging and maintainer release steps |
+
+Detailed guides and dashboard labels are primarily Chinese.
+
+## Development
 
 ```sh
 npm run check
-npm test
 npm run demo
 ```
 
-Demo and automated tests use simulated chats. Python 3 is only required for maintainer archive verification and source packaging. See [usage](docs/USAGE.md), [troubleshooting](docs/TROUBLESHOOTING.md), [architecture](docs/ARCHITECTURE.md), [contributing](CONTRIBUTING.md), [privacy](docs/PRIVACY.md) and [release instructions](docs/RELEASING.md). Detailed documentation and dashboard labels are primarily Chinese.
+Demo uses simulated chats; press Ctrl+C in the terminal to exit. The helper uses Node.js standard libraries and the frontend uses HTML, CSS and vanilla JavaScript. Python 3 is required only for maintainer archive checks and source packaging.
 
-Never share dashboard URLs containing credentials, tokens, raw account data or chat histories. [Security reporting](SECURITY.md) · [MIT](LICENSE) · [Third-party notices](NOTICE.md).
+[MIT](LICENSE) · [Third-party notices](NOTICE.md) · By **dingyang** (**DoubleYang168**). Repository: [DoubleYang168/codex-quota-guard](https://github.com/DoubleYang168/codex-quota-guard). Availability on GitHub does not imply listing in the official plugin directory.
